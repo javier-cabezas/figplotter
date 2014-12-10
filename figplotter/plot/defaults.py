@@ -24,9 +24,15 @@ overflow_params = {
     }
 }
 
+tick_params = {
+}
+
 cluster_params = {
     'outer'      : 1,
     'separation' : 1,
+
+    'tick_params': {
+    },
 }
 
 cluster_2_params = {
@@ -35,19 +41,28 @@ cluster_2_params = {
     'label_params' : {
         'size': 'small'
     },
+    'tick_params': {
+    },
 }
 
 major_cluster_2_params = {
-    'label_params': {},
-    'label_line': 1, # hack to avoid overlapped labels
+    #'label_line': 1, # hack to avoid overlapped labels
     'outer' : 0,
     'separation' : 2,
+    'label_params': {
+        'size': 'medium',
+        'y'   : -0.10,
+    },
+    'tick_params': {
+        'length': 0
+    },
 }
 
 DEFAULTS = {
     'bar'             : bar_params,
     'line'            : line_params,
     'overflow'        : overflow_params,
+    'tick'            : tick_params,
     'cluster'         : cluster_params,
     'cluster_2'       : cluster_2_params,
     'major_cluster_2' : major_cluster_2_params,
