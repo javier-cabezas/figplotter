@@ -1,7 +1,7 @@
 import collections
 
 bar_params = {
-    'color'     : '#BB0000',
+    #'color'     : '#BB0000',
     'edgecolor' : '#000000',
     'hatch'     : '',
     'linewidth' : 1.0,
@@ -9,14 +9,14 @@ bar_params = {
 }
 
 line_params = {
-    'color'     : '#BB0000',
+    #'color'     : '#BB0000',
     'linewidth' : 1.0,
     'marker'    : '',
 }
 
 overflow_params = {
     'enable' : True,
-    'label' : {
+    'label'  : {
         'ha'      : 'left',
         'va'      : 'bottom',
         'fontsize': 9,
@@ -69,6 +69,10 @@ DEFAULTS = {
 }
 
 DEFAULTS_PER_FUNCTION = {}
+
+legend_params = {
+    'loc': 'best',
+}
 
 def update(d, u):
     for k, v in u.iteritems():

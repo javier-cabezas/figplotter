@@ -2,7 +2,6 @@ import numpy as np
 import types
 
 import matplotlib
-matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
 from mpl_toolkits.axes_grid1.inset_locator import zoomed_inset_axes
@@ -52,7 +51,7 @@ def instantiate_params(params, series):
     return param_instances
 
 
-def plot_bars(ax, x_values, y_values, bar_params):
+def plot_bars(ax, x_values, y_values, y_offsets = None, bar_params = None):
     """ Plots an array of bars
 
     This function plots an array of bars using the given parameters. It
@@ -63,11 +62,18 @@ def plot_bars(ax, x_values, y_values, bar_params):
         ax (Axis): axis where to plot
         x_value (list): x values
         y_value (list): y values
+        y_offsets (list): y offsets
         bar_params (dict): dictionary of parameters to be used for the bars
 
     Returns:
         handle: a handle to be used in the legend generation
     """
+
+    if y_offsets is None:
+        y_offsets = [ 0 for _ in y_values ]
+
+    if bar_params is None:
+        bar_params = {}
 
     b_params = bar_params.copy()
     if b_params.has_key('hatchcolor'):
@@ -88,9 +94,9 @@ def plot_bars(ax, x_values, y_values, bar_params):
         b_params['hatch']     = None
 
         # Plot empty bars to draw the colored bar lines
-        ax.bar(x_values, y_values, **b_params)
+        ax.bar(x_values, y_values, bottom = y_offsets, **b_params)
     else:
-        h = ax.bar(x_values, y_values, **bar_params)
+        h = ax.bar(x_values, y_values, bottom = y_offsets, **bar_params)
 
     return h
 
@@ -103,7 +109,8 @@ def plot_overflow(ax, x, y, ylim, overflow_params):
                 **overflow_params['label'])
 
 
-def simple_series(ax, series, names,
+def simple_series(ax, series,
+                  series_names = None,
                   fun = 'line',
                   key_order   = None,
                   ticks       = None,
@@ -119,6 +126,13 @@ def simple_series(ax, series, names,
     overflow_params = defaults.get_defaults_fun(fun + '_series', 'overflow', overflow_params)
     tick_params     = defaults.get_defaults_fun(fun + '_series', 'tick', tick_params)
 
+    len_series = -1
+    for k, v in series.items():
+        if len_series == -1:
+            len_series = len(v)
+        else:
+            assert len_series == len(v), 'All series must have the same number of values'
+
     if key_order is None:
         key_order = series.keys()
 
@@ -129,7 +143,12 @@ def simple_series(ax, series, names,
     plot_params_all = {}
 
     axis_info = ax.figure.get_axis_info(ax)
-    overflows = {}
+
+    if series_names is None:
+        series_names = { v: v for v in key_order }
+
+    if fun == 'bar':
+        offsets_bar = np.array([ 0.0 for _ in range(len_series) ])
 
     for key in key_order:
         if isinstance(series[key], tuple):
@@ -146,14 +165,16 @@ def simple_series(ax, series, names,
         if fun == 'line':
             h, = ax.plot(x_values, y_values, **plot_params_series[key])
         elif fun == 'bar':
-            h = plot_bars(ax, x_values, y_values, plot_params_series[key])
+            h = plot_bars(ax, x_values, y_values, y_offsets = offsets_bar, bar_params = plot_params_series[key])
+
+            offsets_bar += y_values
 
         if kwargs.has_key('ylim') and overflow_params_series[key]['enable']:
             for x, y in zip(x_values, y_values):
                 plot_overflow(ax, x, y, kwargs['ylim'], overflow_params_series[key])
 
         series_info = info.SeriesInfo(key)
-        series_info.set_legend_info(names[key], h)
+        series_info.set_legend_info(series_names[key], h)
         series_info.set_points(x_values, y_values)
 
         axis_info.add_series(key, series_info)
@@ -193,7 +214,7 @@ def line_series(*args, **kwargs):
 
 @plotter_func('bar', 'overflow', 'tick')
 def bar_series(*args, **kwargs):
-    return simple_series(*args, **kwargs)
+    return simple_series(*args, fun='bar', **kwargs)
 
 @plotter_func('bar', 'overflow', 'cluster')
 def cluster_series(ax, series, clusters,
@@ -248,7 +269,7 @@ def cluster_series(ax, series, clusters,
             for x, y in zip(x_values, y_values):
                 plot_overflow(ax, x, y, kwargs['ylim'], overflow_params_series[key])
 
-        h = plot_bars(ax, x_values, y_values, bar_params_series[key])
+        h = plot_bars(ax, x_values, y_values, bar_params = bar_params_series[key])
 
         series_info = info.SeriesInfo(key)
         series_info.set_legend_info(series_names[key], h)
@@ -338,7 +359,7 @@ def cluster_series_2(ax, series, clusters,
             for x, y in zip(x_values, y_values):
                 plot_overflow(ax, x, y, kwargs['ylim'], overflow_params_series[key])
 
-        h = plot_bars(ax, x_values, y_values, bar_params_series[key])
+        h = plot_bars(ax, x_values, y_values, bar_params = bar_params_series[key])
 
         series_info = info.SeriesInfo(key)
         series_info.set_legend_info(series_names[key], h)

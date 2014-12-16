@@ -1,7 +1,7 @@
 import matplotlib
-matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
+import defaults
 import info
 
 PLOTTER_FUNCS = {}
@@ -37,8 +37,8 @@ def plotter_func(*plot_params):
             if kwargs.has_key('xgrid'):
                 ax.xaxis.grid(kwargs['xgrid'])
 
-            legend_params = kwargs.get('legend_params', None)
-            if legend_params is not None:
+            if kwargs.get('legend', True):
+                legend_params = kwargs.get('legend_params', defaults.legend_params)
                 axis_info = fig.get_axis_info(ax)
                 axis_info.legend(**legend_params)
 
