@@ -159,6 +159,8 @@ def simple_series(ax, series,
 
             if ticks is None:
                 x_values = np.array([ x for x in range(len(y_values)) ]) + offset
+                if fun == 'bar':
+                    x_values = x_values - plot_params_series[key]['width'] / 2.0
             else:
                 x_values = np.array(ticks) + offset
 
@@ -179,7 +181,10 @@ def simple_series(ax, series,
 
         axis_info.add_series(key, series_info)
 
-    axis_info.set_series_order(key_order)
+    if fun == 'bar':
+        axis_info.set_series_order(key_order[::-1])
+    else:
+        axis_info.set_series_order(key_order)
 
     if ticklabels is not None:
         ax.set_xticklabels(ticklabels)

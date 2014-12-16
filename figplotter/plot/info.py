@@ -61,7 +61,7 @@ class AxisInfo(object):
         self.figure_info = figure_info
 
         self.series       = {}
-        self.series_order = None
+        self.series_order = []
 
         self.clusters = {}
 
@@ -72,10 +72,9 @@ class AxisInfo(object):
             self.series[id_].append(series_info)
 
     def set_series_order(self, series_order):
-        assert self.series_order is None or (len(series_order) == len(self.series_order)), \
-               'Series\' lengths do not match'
-
-        self.series_order = series_order
+        for series in series_order:
+            if series not in self.series_order:
+                self.series_order.append(series)
 
     def set_clusters(self, cluster_info, level = 0):
         if not self.clusters.has_key(level):
