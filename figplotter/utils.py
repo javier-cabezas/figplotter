@@ -49,7 +49,7 @@ def clusterize(series, clusters):
             fun(d)
         else:
             for k, v in d.items():
-                walk(v, clusters)
+                walk(v, fun)
 
     ret = OrderedDict()
     for cluster_level in clusters:
