@@ -1,23 +1,25 @@
-import matplotlib
-import matplotlib.pyplot as plt
+'''
+Created on Jan 19, 2015
 
+@author: Javier Cabezas <javier.cabezas@gmail.com>
+'''
 import defaults
-import info
 
 PLOTTER_FUNCS = {}
 
-"""
+'''
 Decorator for plotting functions. It handles the legend, and axes labels, scales and limits
 If no figure exists yet the function creates it, otherwise plots on top of the given one
-"""
-def plotter_func(*plot_params):
+'''
+def plotter_func(plot_styles):
     def plotter_decorator(func):
         # Register plotter function
-        PLOTTER_FUNCS[func.__name__] = plot_params
+        PLOTTER_FUNCS[func.__name__] = plot_styles
 
         # Intercept function call and parse some arguments
         def inner(ax, *args, **kwargs):
             fig = ax.figure
+
             func(ax, *args, **kwargs)
 
             if kwargs.get('ylabel', None) is not None:
@@ -31,6 +33,8 @@ def plotter_func(*plot_params):
 
             if kwargs.has_key('ylim'):
                 ax.set_ylim(kwargs['ylim'])
+            if kwargs.has_key('xlim'):
+                ax.set_xlim(kwargs['xlim'])
 
             if kwargs.has_key('ygrid'):
                 ax.yaxis.grid(kwargs['ygrid'])

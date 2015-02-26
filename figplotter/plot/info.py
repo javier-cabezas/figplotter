@@ -1,9 +1,10 @@
-import matplotlib
 import matplotlib.pyplot as plt
 
 from matplotlib.figure import Figure as PLTFigure
 
 from collections import OrderedDict
+
+from .. import utils
 
 class SeriesInfo(object):
     def __init__(self, id_):
@@ -69,7 +70,7 @@ class AxisInfo(object):
         if not self.series.has_key(id_):
             self.series[id_] = series_info
         else:
-            self.series[id_].append(series_info)
+            self.series[id_].merge(series_info)
 
     def set_series_order(self, series_order):
         for series in series_order:
@@ -109,7 +110,17 @@ class AxisInfo(object):
         return s
 
 class Figure(PLTFigure):
+    figure_index = 1
+
     def __init__(self, *args, **kwargs):
+        name = kwargs.get('name', None)
+        if name is not None:
+            del kwargs[name]
+            self.name = name
+        else:
+            self.name = 'figure{0}'.format(Figure.figure_index)
+            Figure.figure_index += 1
+
         PLTFigure.__init__(self, *args, **kwargs)
 
         self.axes_   = {}
@@ -134,19 +145,32 @@ class Figure(PLTFigure):
             self.series_[id_].merge(series_info)
 
     def add_subplot(self, *args, **kwargs):
-        ax = PLTFigure.add_subplot(self, *args, **kwargs)
+        '''
+        @param self: figure
+        @param args: positional args for Figure.add_subplot
+        @param kwargs: keyword args for Figure.add_subplot
 
+        @return: new Axes object bound to figure
+        '''
+        ax = PLTFigure.add_subplot(self, *args, **kwargs)
         self.add_axis(ax)
 
         return ax
 
     def twinx(self, ax):
         ax2 = ax.twinx()
-
         self.add_axis(ax2)
 
         return ax2
 
-
     def close(self):
         plt.close(self)
+
+    def show(self, warn=True):
+        utils.message('Showing figure "%s"' % self.name)
+        return PLTFigure.show(self, warn=warn)
+
+    def savefig(self, *args, **kwargs):
+        utils.message('Saving figure "%s" in "%s"' % (self.name, args[0]))
+        PLTFigure.savefig(self, *args, **kwargs)
+

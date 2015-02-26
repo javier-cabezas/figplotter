@@ -1,112 +1,120 @@
-import collections
+'''
+Created on Jan 19, 2015
 
-bar_params = {
+@author: Javier Cabezas <javier.cabezas@gmail.com>
+'''
+
+import copy
+import itertools
+
+from .. import utils
+
+'''
+Parameter used for "_" values defined by the base styles
+'''
+class BaseParameter(utils.Parameter):
+    def __init__(self, values):
+        self.values = values
+
+P = BaseParameter
+
+bar_params = [
     #'color'     : '#BB0000',
-    'edgecolor' : '#000000',
-    'hatch'     : '',
-    'linewidth' : 1.0,
-    'width'     : 1.0,
-}
+    ('bar::edgecolor', '#000000'),
+    ('bar::hatch'    , ''),
+    ('bar::linewidth', 1.0),
+    ('bar::width'    , 1.0),
+]
 
-line_params = {
+
+plot_params = [
     #'color'     : '#BB0000',
-    'linewidth' : 1.0,
-    'marker'    : '',
-}
+    ('plot::linewidth', 1.0),
+    ('plot::marker'   , ''),
+]
 
-overflow_params = {
-    'enable' : True,
-    'label'  : {
-        'ha'      : 'left',
-        'va'      : 'bottom',
-        'fontsize': 9,
-        'rotation': 20,
-    }
-}
+overflow_params = [
+    ('overflow::enable'   , True),
+    ('overflow::label::ha', 'left'),
+    ('overflow::label::va', 'bottom'),
+    ('overflow::label::fontsize', 9),
+    ('overflow::label::rotation', 20)
+]
 
-tick_params = {
-}
+tick_params = [
+    ('tick::color',     '#000000'),
+    ('tick::direction', 'out'),
+]
 
-cluster_params = {
-    'outer'      : 1,
-    'separation' : 1,
+major_tick_params = [
+    ('major_tick::color',     '#000000'),
+    ('major_tick::direction', 'out'),
+]
 
-    'tick_params': {
-    },
-}
+ticklabel_params = [
+    ('ticklabel::color', '#000000'),
+    ('ticklabel::x',     0.0),
+    ('ticklabel::y',     0.0)
+]
 
-cluster_2_params = {
-    'outer'      : 0,
-    'separation' : 1,
-    'label_params' : {
-        'size': 'small'
-    },
-    'tick_params': {
-    },
-}
+major_ticklabel_params = [
+    ('major_ticklabel::color', '#000000'),
+    ('major_ticklabel::x',     0.0),
+    ('major_ticklabel::y',     0.0)
+]
 
-major_cluster_2_params = {
-    #'label_line': 1, # hack to avoid overlapped labels
-    'outer' : 0,
-    'separation' : 2,
-    'label_params': {
-        'size': 'medium',
-        'y'   : -0.10,
-    },
-    'tick_params': {
-        'length': 0
-    },
-}
+cluster_params = [
+    ('cluster::outer'      , 1),
+    ('cluster::separation' , 0.5),
+]
 
 DEFAULTS = {
     'bar'             : bar_params,
-    'line'            : line_params,
+    'plot'            : plot_params,
     'overflow'        : overflow_params,
     'tick'            : tick_params,
+    'major_tick'      : major_tick_params,
+    'ticklabel'       : ticklabel_params,
+    'major_ticklabel' : major_ticklabel_params,
     'cluster'         : cluster_params,
-    'cluster_2'       : cluster_2_params,
-    'major_cluster_2' : major_cluster_2_params,
+    'major_cluster'   : cluster_params
 }
 
-DEFAULTS_PER_FUNCTION = {}
+FUNCTION_DEFAULTS = {}
 
 legend_params = {
     'loc': 'best',
 }
 
-def update(d, u):
-    for k, v in u.iteritems():
-        if isinstance(v, collections.Mapping):
-            r = update(d.get(k, {}), v)
-            d[k] = r
-        else:
-            d[k] = u[k]
-
-    return d
-
-def register_fun(fun, params):
-    DEFAULTS_PER_FUNCTION[fun] = {}
-    for param in params:
-        DEFAULTS_PER_FUNCTION[fun][param] = DEFAULTS[param]
 
 def merge_params(default, user):
     params = default.copy()
-    update(params, user)
+    utils.update(params, user)
     return params
 
-def set_defaults_fun(fun, key, val):
-    assert fun in DEFAULTS_PER_FUNCTION.keys(), 'Invalid function {0}'.format(fun)
-    assert key in DEFAULTS_PER_FUNCTION[fun].keys(), '{0} is not a valid param group for {1}'.format(key, fun)
 
-    DEFAULTS_PER_FUNCTION[fun][key] = merge_params(DEFAULTS_PER_FUNCTION[fun][key],
-                                                   val.copy())
+def register_function(fun, styles):
+    FUNCTION_DEFAULTS[fun] = {}
+    for style_name, params in styles.items():
+        FUNCTION_DEFAULTS[fun][style_name] = {}
+        for param in params:
+            FUNCTION_DEFAULTS[fun][style_name][param] = DEFAULTS[param]
 
-def get_defaults_fun(fun, key, override = None):
-    assert fun in DEFAULTS_PER_FUNCTION.keys(), 'Invalid function {0}'.format(fun)
-    assert key in DEFAULTS_PER_FUNCTION[fun].keys(), '{0} is not a valid param group for {1}'.format(key, fun)
 
-    ret = DEFAULTS_PER_FUNCTION[fun][key]
-    if override is not None:
-        ret = merge_params(ret, override)
+def get_function_defaults(fun, selectors, style):
+    assert fun in FUNCTION_DEFAULTS.keys(), 'Invalid function {0}'.format(fun)
+
+    ret = []
+
+    combinations = itertools.product(*selectors)
+
+    for combination in list(combinations):
+        query = "::".join(combination)
+        query_dict = {}
+        for param in FUNCTION_DEFAULTS[fun][style].keys():
+            for k, v in FUNCTION_DEFAULTS[fun][style][param]:
+                query_dict[k] = v
+
+        ret += [(query, query_dict)]
 
     return ret

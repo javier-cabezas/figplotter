@@ -1,10 +1,31 @@
-import matplotlib
-import matplotlib.pyplot as plt
+'''
+Created on Jan 19, 2015
 
-import figplotter
+@author: Javier Cabezas <javier.cabezas@gmail.com>
+'''
+
+import matplotlib.pyplot as plt
 
 from figplotter.utils import Parameter as P, clusterize
 from figplotter.plot import figure, cluster_series, cluster_series_2
+
+
+style_series = {
+    '*::*'    : { 'bar::color'    : 'r' },
+    '*::Read' : { 'bar::color'    : 'b' },
+    '*::Write': { 'bar::color'    : 'g' },
+    'peak::*' : { 'bar::linewidth': 5   }
+}
+
+
+style_axis = {
+    '*': { 'tick::direction'      : 'inout',
+           'major_tick::direction': 'out' },
+    'x': { 'major_tick::length'   : 20,
+           'major_tick::top'      : False,
+           'major_ticklabel::y'   : -0.05 }
+}
+
 
 def figure_simple_cluster():
     fig = figure()
@@ -22,14 +43,12 @@ def figure_simple_cluster():
 
     cluster_series(ax,
                    series,
-                   clusters,
-                   bar_params = {
-                       'color' : P({
-                           'Read': 'b',
-                           'Write': 'g',
-                       })
-                   })
+                   [ clusters ],
+                   style_series = style_series,
+                   style_axis = style_axis)
+
     fig.show()
+
 
 def figure_simple_clusterize():
     fig = figure()
@@ -38,18 +57,23 @@ def figure_simple_clusterize():
     write = [2, 3, 3.5, 3.75]
 
     clusters = [ 'local', 'remote', 'copy', 'peak' ]
-    series = clusterize({'Read': read, 'Write': write}, [clusters])
+    series = clusterize({'Read': read, 'Write': write}, [ clusters ])
 
     cluster_series(ax,
                    series,
-                   clusters,
-                   bar_params = {
-                       'color' : P({
-                           'Read': 'b',
-                           'Write': 'g',
-                       })
-                   })
+                   [ clusters ],
+                   style_series = style_series,
+                   style_axis = style_axis)
+
     fig.show()
+
+
+style_series_2 = {
+    '*::*::*'    : { 'bar::color'    : 'r' },
+    '*::*::Read' : { 'bar::color'    : 'b' },
+    '*::*::Write': { 'bar::color'    : 'g' },
+    'PCIe 3.0::remote::*' : { 'bar::linewidth': 5   }
+}
 
 
 def figure_twolevel():
@@ -73,12 +97,10 @@ def figure_twolevel():
     cluster_series_2(ax,
                      series,
                      [clusters_2, clusters_1],
-                     bar_params = {
-                         'color' : P({
-                             'Read': 'b',
-                             'Write': 'g',
-                         })
-                     })
+                     ylim=(0,4.5),
+                     style_series = style_series_2,
+                     style_axis = style_axis)
+
     fig.show()
 
 
@@ -95,12 +117,10 @@ def figure_twolevel_clusterize():
     cluster_series_2(ax,
                      series,
                      [clusters_2, clusters_1],
-                     bar_params = {
-                         'color' : P({
-                             'Read': 'b',
-                             'Write': 'g',
-                         })
-                     })
+                     style_series = style_series_2,
+                     style_axis = style_axis)
+
+    fig.savefig('cluster.png')
     fig.show()
 
 

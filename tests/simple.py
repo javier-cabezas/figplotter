@@ -1,16 +1,19 @@
-import matplotlib
+'''
+Created on Jan 19, 2015
+
+@author: Javier Cabezas <javier.cabezas@gmail.com>
+'''
+
 import matplotlib.pyplot as plt
 
-import figplotter
+from figplotter.plot import figure, bar_series, plot_series
 
-from figplotter.utils import Parameter as P
-from figplotter.plot import figure, bar_series, line_series
 
 def figure_lines():
     fig = figure()
     ax = fig.add_subplot(111)
 
-    line_series(ax,
+    plot_series(ax,
                 { 'Read':  [1, 2,   4,    5],
                   'Write': [2, 3, 3.5, 3.75] })
     fig.show()
@@ -20,12 +23,13 @@ def figure_lines2():
     fig = figure()
     ax = fig.add_subplot(111)
 
-    line_series(ax,
+    plot_series(ax,
                 { 'Read':  [1, 2,   4,    5] },
                 legend = False)
-    line_series(ax,
+    plot_series(ax,
                 { 'Write': [2, 3, 3.5, 3.75] })
     fig.show()
+
 
 def figure_bars():
     fig = figure()
@@ -35,6 +39,12 @@ def figure_bars():
                { 'Read': [1, 2, 4, 5] })
     fig.show()
 
+
+barstyle = {}
+barstyle['*']     = { 'bar::linewidth' : 2 }
+barstyle['Read']  = { 'bar::color'     : 'b' }
+barstyle['Write'] = { 'bar::color'     : 'g' }
+
 def figure_bars_stacked():
     fig = figure()
     ax = fig.add_subplot(111)
@@ -42,11 +52,13 @@ def figure_bars_stacked():
     bar_series(ax,
                { 'Read' : [1, 2,   4,    5],
                  'Write': [2, 3, 3.5, 3.75] },
-               plot_params = {
-                   'color' : P({ 'Read' : 'b',
-                                 'Write': 'g'})
-               })
+               style_series = barstyle)
     fig.show()
+
+
+linestyle = {'*' : {'plot::color' : 'r',
+                    'plot::linewidth': 5 }}
+
 
 def figure_hybrid():
     fig = figure()
@@ -55,14 +67,12 @@ def figure_hybrid():
     bar_series(ax,
                { 'Read' : [1, 2,   4,    5],
                  'Write': [2, 3, 3.5, 3.75] },
-               plot_params = {
-                   'color' : P({ 'Read' : 'b',
-                                 'Write': 'g'})
-               })
-    line_series(ax,
+               style_series = barstyle)
+    plot_series(ax,
                 { 'Baseline': [1.75, 2.25, 3.25, 3.5] },
-                plot_params = { 'color' : 'r' })
+                style_series = linestyle)
     fig.show()
+
 
 figure_lines()
 figure_lines2()
