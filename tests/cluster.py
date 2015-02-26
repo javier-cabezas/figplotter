@@ -117,10 +117,10 @@ def figure_twolevel_clusterize():
     cluster_series_2(ax,
                      series,
                      [clusters_2, clusters_1],
+                     ylim=(0,4.5),
                      style_series = style_series_2,
                      style_axis = style_axis)
 
-    fig.savefig('cluster.png')
     fig.show()
 
 

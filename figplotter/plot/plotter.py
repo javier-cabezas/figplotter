@@ -3,7 +3,7 @@ Created on Jan 19, 2015
 
 @author: Javier Cabezas <javier.cabezas@gmail.com>
 '''
-import defaults
+from . import defaults
 
 PLOTTER_FUNCS = {}
 
@@ -31,14 +31,14 @@ def plotter_func(plot_styles):
             if kwargs.get('xscale', None) is not None:
                 ax.set_xscale(kwargs['xscale'])
 
-            if kwargs.has_key('ylim'):
+            if 'ylim' in kwargs.keys():
                 ax.set_ylim(kwargs['ylim'])
-            if kwargs.has_key('xlim'):
+            if 'xlim' in kwargs.keys():
                 ax.set_xlim(kwargs['xlim'])
 
-            if kwargs.has_key('ygrid'):
+            if 'ygrid' in kwargs.keys():
                 ax.yaxis.grid(kwargs['ygrid'])
-            if kwargs.has_key('xgrid'):
+            if 'xgrid' in kwargs.keys():
                 ax.xaxis.grid(kwargs['xgrid'])
 
             if kwargs.get('legend', True):

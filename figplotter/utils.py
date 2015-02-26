@@ -18,7 +18,7 @@ def update(d, u):
 
     @return: the merged dictionary hierarchy
     '''
-    for k, v in u.iteritems():
+    for k, v in u.items():
         if isinstance(v, C.Mapping):
             orig = copy.deepcopy(d.get(k, {}))
             r = update(orig, v)
@@ -83,7 +83,7 @@ class Parameter(object):
 
     def update(self, param):
         def check_default_value(orig, new):
-            if orig.has_key('*') and new.has_key('*'):
+            if '*' in orig.keys() and '*' in new.keys():
                 if orig['*'] != new['*']:
                     raise Exception('Different default values')
             else:

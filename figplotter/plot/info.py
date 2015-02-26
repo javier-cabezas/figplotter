@@ -41,7 +41,7 @@ class ClusterInfo(object):
         self.cluster_x_values = x_values
 
         for name, x in zip(names, x_values):
-            if not self.clusters.has_key(name):
+            if name not in self.clusters.keys():
                 self.clusters[name] = []
 
             self.clusters[name].append(x)
@@ -67,7 +67,7 @@ class AxisInfo(object):
         self.clusters = {}
 
     def add_series(self, id_, series_info):
-        if not self.series.has_key(id_):
+        if id_ not in self.series.keys():
             self.series[id_] = series_info
         else:
             self.series[id_].merge(series_info)
@@ -78,7 +78,7 @@ class AxisInfo(object):
                 self.series_order.append(series)
 
     def set_clusters(self, cluster_info, level = 0):
-        if not self.clusters.has_key(level):
+        if level not in self.clusters.keys():
             self.clusters[level] = cluster_info
         else:
             self.clusters[level].merge(cluster_info)
@@ -133,13 +133,13 @@ class Figure(PLTFigure):
         return self.axes_[ax]
 
     def add_axis(self, ax):
-        if not self.axes_.has_key(ax):
+        if ax not in self.axes_.keys():
             self.axes_[ax] = AxisInfo(ax, self)
 
     def add_series(self, ax, id_, series_info):
-        assert self.axes_.has_key(ax), 'Axis does not exist'
+        assert ax in self.axes_.keys(), 'Axis does not exist'
 
-        if not self.series_.has_key(id_):
+        if id_ not in self.series_.keys():
             self.series_[id_] = series_info
         else:
             self.series_[id_].merge(series_info)

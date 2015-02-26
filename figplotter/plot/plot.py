@@ -10,33 +10,32 @@ from mpl_toolkits.axes_grid1.inset_locator import zoomed_inset_axes
 
 import copy
 
-import defaults
-import info
 import itertools
 import numpy as np
 
 from .. import utils
-from plotter import plotter_func, PLOTTER_FUNCS
-import style
+from . import info
+from . import plotter
+from . import style
 
-def instantiate_params_series(params, series):
-    for key, value in params.items():
+def instantiate_params_series(params_out, params_in, series):
+    for key, value in params_in.items():
         if isinstance(value, utils.Parameter):
             # Instantiate the value for the current series
             if series in value.values.keys():
                 v = value.values[series]
             else:
-                del params[key]
+                del params_out[key]
                 continue
         elif isinstance(value, Mapping):
             # Nested property, go to the next level
-            instantiate_params_series(params[key], series)
+            instantiate_params_series(params_out[key], params_in[key], series)
             continue
         else:
             # Use the value "as is"
             v = value
 
-        params[key] = v
+        params_out[key] = v
 
 
 def instantiate_params(params, series_list):
@@ -55,9 +54,10 @@ def instantiate_params(params, series_list):
 
     for series in series_list:
         # Create an instance of the parameters' dictionary for each series
-        p = copy.deepcopy(params)
-        instantiate_params_series(p, series)
-        param_instances[series] = p
+        params_in  = copy.deepcopy(params)
+        params_out = copy.deepcopy(params)
+        instantiate_params_series(params_out, params_in, series)
+        param_instances[series] = params_out
 
     return param_instances
 
@@ -81,7 +81,7 @@ def plot_bars(ax, x_values, y_values, y_offsets = None, bar_params = {}):
     if y_offsets is None:
         y_offsets = np.zeros(len(y_values))
 
-    if bar_params.has_key('hatchcolor'):
+    if 'hatchcolor' in bar_params.keys():
         b_params = bar_params.copy()
         # If hatchcolor is defined, use edgecolor to define the color of
         # the bar's line
@@ -150,24 +150,14 @@ def simple_series(ax, series,
     params_series = style.generate_params(style_series, [ key_order ], 'style_series', fun + '_series')
     params_axis   = style.generate_params(style_axis, [['x', 'y']], 'style_axis', fun + '_series')
 
-    if fun == 'bar':
-        bar_params  = params_series['bar_params']
-    if fun == 'plot':
-        plot_params = params_series['plot_params']
-
+    barplot_params  = params_series[fun + '_params']
     overflow_params = params_series['overflow_params']
 
     tick_params      = params_axis['tick_params']
     ticklabel_params = params_axis['ticklabel_params']
 
     # Instantiate params_series
-    if fun == 'bar':
-        bar_params_series     = instantiate_params(bar_params, key_order)
-        barplot_params_series = bar_params_series
-    elif fun == 'plot':
-        plot_params_series    = instantiate_params(plot_params, key_order)
-        barplot_params_series = plot_params_series
-
+    barplot_params_series  = instantiate_params(barplot_params, key_order)
     overflow_params_series = instantiate_params(overflow_params, key_order)
 
     tick_params_axis = instantiate_params(tick_params, ['x', 'y'])
@@ -202,7 +192,7 @@ def simple_series(ax, series,
 
             offsets_bar += y_values
 
-        if kwargs.has_key('ylim') and overflow_params_series[key]['enable']:
+        if 'ylim' in kwargs.keys() and overflow_params_series[key]['enable']:
             for x, y in zip(x_values, y_values):
                 plot_overflow(ax, x, y, kwargs['ylim'], overflow_params_series[key])
 
@@ -251,23 +241,23 @@ def simple_series(ax, series,
                 h = plot_bars(ax2, ticks, series[key], bar_params = barplot_params_series[key])
 
 
-@plotter_func({'style_series': ['plot', 'overflow'],
-               'style_axis'  : ['tick', 'ticklabel']})
+@plotter.plotter_func({'style_series': ['plot', 'overflow'],
+                       'style_axis'  : ['tick', 'ticklabel']})
 def plot_series(*args, **kwargs):
     args = list(args) + ['plot']
     return simple_series(*args, **kwargs)
 
 
-@plotter_func({'style_series': ['bar', 'overflow'],
-               'style_axis'  : ['tick', 'ticklabel']})
+@plotter.plotter_func({'style_series': ['bar', 'overflow'],
+                       'style_axis'  : ['tick', 'ticklabel']})
 def bar_series(*args, **kwargs):
     args = list(args) + ['bar']
     return simple_series(*args, **kwargs)
 
 
-@plotter_func({'style_series' : ['bar', 'overflow'],
-               'style_axis'   : ['tick', 'ticklabel'],
-               'style_cluster': ['cluster']})
+@plotter.plotter_func({'style_series' : ['bar', 'overflow'],
+                       'style_axis'   : ['tick', 'ticklabel'],
+                       'style_cluster': ['cluster']})
 def cluster_series(ax, series, clusters,
                    series_names  = None,
                    cluster_names = None,
@@ -278,7 +268,7 @@ def cluster_series(ax, series, clusters,
                    style_cluster = {},
                    **kwargs):
     if key_order is None:
-        series_dict = series.items()[0][1]
+        series_dict = series[list(series.keys())[0]]
         key_order = series_dict.keys()
         if not isinstance(series_dict, OrderedDict):
             key_order = sorted(key_order)
@@ -354,7 +344,7 @@ def cluster_series(ax, series, clusters,
 
             off += bar_params_series[series_fqn]['width']
 
-            if kwargs.has_key('ylim') and overflow_params_series[series_fqn]['enable']:
+            if 'ylim' in kwargs.keys() and overflow_params_series[series_fqn]['enable']:
                 plot_overflow(ax, x_value, y_value, kwargs['ylim'], overflow_params_series[series_fqn])
 
             h = plot_bars(ax, [x_value], [y_value], bar_params = bar_params_series[series_fqn])
@@ -386,10 +376,10 @@ def cluster_series(ax, series, clusters,
                     right = ticks[-1] + last_cluster_width/2.0 + last_cluster_outer)
 
 
-@plotter_func({'style_series'       : ['bar', 'overflow'],
-               'style_axis'         : ['tick', 'ticklabel', 'major_tick', 'major_ticklabel'],
-               'style_cluster'      : ['cluster'],
-               'style_major_cluster': ['cluster']})
+@plotter.plotter_func({'style_series'       : ['bar', 'overflow'],
+                       'style_axis'         : ['tick', 'ticklabel', 'major_tick', 'major_ticklabel'],
+                       'style_cluster'      : ['cluster'],
+                       'style_major_cluster': ['cluster']})
 def cluster_series_2(ax, series, clusters,
                      series_names  = None,
                      cluster_names = None,
@@ -401,7 +391,8 @@ def cluster_series_2(ax, series, clusters,
                      style_major_cluster = {},
                      **kwargs):
     if key_order is None:
-        series_dict = series.items()[0][1].items()[0][1]
+        series_dict = series[list(series.keys())[0]]
+        series_dict = series_dict[list(series_dict.keys())[0]]
         key_order = series_dict.keys()
         if not isinstance(series_dict, OrderedDict):
             key_order = sorted(key_order)
@@ -543,7 +534,7 @@ def cluster_series_2(ax, series, clusters,
 
                 off += bar_params_series[series_fqn]['width']
 
-                if kwargs.has_key('ylim') and overflow_params_series[series_fqn]['enable']:
+                if 'ylim' in kwargs.keys() and overflow_params_series[series_fqn]['enable']:
                     plot_overflow(ax, x_value, y_value, kwargs['ylim'], overflow_params_series[series_fqn])
 
                 h = plot_bars(ax, [x_value], [y_value], bar_params = bar_params_series[series_fqn])

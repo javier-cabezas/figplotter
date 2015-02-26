@@ -5,9 +5,9 @@ Created on Jan 19, 2015
 '''
 
 import copy
-import defaults
 
 from .. import utils
+from . import defaults
 
 
 def build_dict(query):
@@ -23,14 +23,14 @@ def build_dict(query):
         if len(names) == 1:
             ret[params_name] = d
         elif len(names) == 2:
-            if not ret.has_key(params_name):
+            if params_name not in ret.keys():
                 ret[params_name] = {}
 
             ret[params_name][names[1]] = d
         elif len(names) == 3:
-            if not ret.has_key(params_name):
+            if params_name not in ret.keys():
                 ret[params_name] = {}
-            if not ret[params_name].has_key(names[1]):
+            if names[1] not in ret[params_name].keys():
                 ret[params_name][names[1]] = {}
 
             ret[params_name][names[1]][names[2]] = d
@@ -86,7 +86,7 @@ def sort_queries(style, levels):
 
             score_level /= 10
 
-        if not query_histo.has_key(score):
+        if score not in query_histo.keys():
             query_histo[score] = []
 
         query_histo[score].append((query, val))

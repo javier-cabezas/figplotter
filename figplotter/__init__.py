@@ -1,5 +1,5 @@
-import utils
 import os
+from figplotter import utils
 
 # Initialize logging level
 log_level = os.environ.get('FIGPLOTTER_LOG_LEVEL', 'default')

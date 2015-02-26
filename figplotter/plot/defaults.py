@@ -4,7 +4,6 @@ Created on Jan 19, 2015
 @author: Javier Cabezas <javier.cabezas@gmail.com>
 '''
 
-import copy
 import itertools
 
 from .. import utils
