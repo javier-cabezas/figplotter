@@ -3,6 +3,21 @@ figplotter
 
 Plotting infrastructure for Python using matplotlib
 
+Install
+-------
+
+You can easily install figplotter using pip.
+
+In your home directory:
+```
+pip install figplotter --user
+```
+
+In the system (requires superuser privileges):
+```
+sudo pip install figplotter
+```
+
 Example
 -------
 
