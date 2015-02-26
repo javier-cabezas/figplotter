@@ -55,7 +55,7 @@ clusters_1 = [ 'PCIe 2.0', 'PCIe 3.0' ]
 clusters_2 = [ 'local', 'remote' ]
 # Helper functions are provided to reshape data as expected by the plotting
 # functions
-data = clusterize({ 'Read': read, 'Write': write}, [clusters_2, clusters_1])
+data = clusterize({ 'Read': read, 'Write': write}, [clusters_1, clusters_2])
 
 cluster_series_2(ax,
                  data,
