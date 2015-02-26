@@ -31,19 +31,23 @@ from figplotter.plot import figure, cluster_series_2
 # cluster_level1::cluster_level2::series.
 # Wildcards can be used in any field to select groups of bars.
 style_series = {
-    '*::*::Read' : { 'bar::color' : 'b' },
-    '*::*::Write': { 'bar::color' : 'g' },
-    'PCIe 3.0::remote::*' : { 'bar::linewidth': 5   }
+    '*::*::Read' : { 'bar::color' : 'b' }, # Set color for all 'Read' columns
+    '*::*::Write': { 'bar::color' : 'g' }, # Set color for all 'Write' columns
+    'PCIe 3.0::remote::*' : { 'bar::linewidth': 5 } # Use different line width
+                                                    # for the two bars in the
+                                                    # 'PCIe 3.0::remote' cluster
 }
 # We can also set the axis properties. In a two-level clustering figure the
 # properties of the ticks and labels can be configured independently for the
 # two levels of clusters (tick/ticklabel and major_tick/major_ticklabel).
 style_axis = {
-    '*': { 'tick::direction'      : 'inout',
-           'major_tick::direction': 'out' },
-    'x': { 'major_tick::length'   : 20,
-           'major_tick::top'      : False,
-           'major_ticklabel::y'   : -0.05 }
+    '*': { 'tick::direction'      : 'inout', # Use different tick styles for
+           'major_tick::direction': 'out' }, # major and normal ticks
+    'x': { 'major_tick::length'   : 20,      # Use longer tick for major ticks
+           'major_tick::top'      : False,   # Disable major ticks on the top
+           'major_ticklabel::y'   : -0.05 }  # Offset labels for major clusters
+                                             # so the don't overlap with the
+                                             # labels for minor clusters
 }
 # Figures/axes are created just like in matplotlib
 fig = figure()
