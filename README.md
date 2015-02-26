@@ -51,15 +51,15 @@ ax = fig.add_subplot(111)
 
 read  = [1, 2,   4,    5]
 write = [2, 3, 3.5, 3.75]
-clusters_1 = [ 'local', 'remote' ]
-clusters_2 = [ 'PCIe 2.0', 'PCIe 3.0' ]
+clusters_1 = [ 'PCIe 2.0', 'PCIe 3.0' ]
+clusters_2 = [ 'local', 'remote' ]
 # Helper functions are provided to reshape data as expected by the plotting
 # functions
 data = clusterize({ 'Read': read, 'Write': write}, [clusters_2, clusters_1])
 
 cluster_series_2(ax,
                  data,
-                 [clusters_2, clusters_1],
+                 [clusters_1, clusters_2],
                  ylim = (0, 4.5),
                  style_series = style_series,
                  style_axis = style_axis)

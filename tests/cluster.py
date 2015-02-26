@@ -82,21 +82,21 @@ def figure_twolevel():
     read  = [1, 2,   4,    5]
     write = [2, 3, 3.5, 3.75]
 
-    clusters_1 = [ 'local', 'remote' ]
-    clusters_2 = [ 'PCIe 2.0', 'PCIe 3.0' ]
+    clusters_1 = [ 'PCIe 2.0', 'PCIe 3.0' ]
+    clusters_2 = [ 'local', 'remote' ]
     series = {}
-    for i, cluster2 in enumerate(clusters_2):
-        series[cluster2] = {}
+    for i, cluster1 in enumerate(clusters_1):
+        series[cluster1] = {}
 
-        for j, cluster1 in enumerate(clusters_1):
-            series[cluster2][cluster1] = {}
+        for j, cluster2 in enumerate(clusters_2):
+            series[cluster1][cluster2] = {}
 
-            series[cluster2][cluster1]['Read']  = read[j + i * len(clusters_1)]
-            series[cluster2][cluster1]['Write'] = write[j + i * len(clusters_1)]
+            series[cluster1][cluster2]['Read']  = read[j + i * len(clusters_2)]
+            series[cluster1][cluster2]['Write'] = write[j + i * len(clusters_2)]
 
     cluster_series_2(ax,
                      series,
-                     [clusters_2, clusters_1],
+                     [clusters_1, clusters_2],
                      ylim=(0,4.5),
                      style_series = style_series_2,
                      style_axis = style_axis)
@@ -110,13 +110,13 @@ def figure_twolevel_clusterize():
     read  = [1, 2,   4,    5]
     write = [2, 3, 3.5, 3.75]
 
-    clusters_1 = [ 'local', 'remote' ]
-    clusters_2 = [ 'PCIe 2.0', 'PCIe 3.0' ]
-    series = clusterize({ 'Read': read, 'Write': write}, [clusters_2, clusters_1])
+    clusters_1 = [ 'PCIe 2.0', 'PCIe 3.0' ]
+    clusters_2 = [ 'local', 'remote' ]
+    series = clusterize({ 'Read': read, 'Write': write}, [clusters_1, clusters_2])
 
     cluster_series_2(ax,
                      series,
-                     [clusters_2, clusters_1],
+                     [clusters_1, clusters_2],
                      ylim=(0,4.5),
                      style_series = style_series_2,
                      style_axis = style_axis)
