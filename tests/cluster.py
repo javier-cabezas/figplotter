@@ -6,7 +6,7 @@ Created on Jan 19, 2015
 
 import matplotlib.pyplot as plt
 
-from figplotter.utils import Parameter as P, clusterize
+from figplotter.utils import clusterize
 from figplotter.plot import figure, cluster_series, cluster_series_2
 
 

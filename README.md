@@ -23,7 +23,7 @@ Example
 
 This is the code to generate a figure with two-level clustering using figplotter:
 ```python
-from figplotter.utils import Parameter as P, clusterize
+from figplotter.utils import clusterize
 from figplotter.plot import figure, cluster_series_2
 # We can set the properties of the bars with bar-granularity. All properties
 # offered by matplotlib are supported. Bars are selected by using data
