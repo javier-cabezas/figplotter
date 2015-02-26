@@ -43,4 +43,4 @@ cluster_series_2(ax,
 
 fig.show()
 ```
-![two-level clustering](https://raw.githubusercontent.com/wiki/javier-cabezas/figplotter/images/cluster.png =500x)
+![two-level clustering](https://raw.githubusercontent.com/wiki/javier-cabezas/figplotter/images/cluster.png)
