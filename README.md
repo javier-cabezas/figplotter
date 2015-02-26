@@ -11,7 +11,7 @@ This is the code to generate a figure with two-level clustering using figplotter
 from figplotter.utils import Parameter as P, clusterize
 from figplotter.plot import figure, cluster_series, cluster_series_2
 
-style_series_2 = {
+style_series = {
     '*::*::Read' : { 'bar::color'    : 'b' },
     '*::*::Write': { 'bar::color'    : 'g' },
     'PCIe 3.0::remote::*' : { 'bar::linewidth': 5   }
@@ -38,7 +38,7 @@ cluster_series_2(ax,
                  series,
                  [clusters_2, clusters_1],
                  ylim = (0, 4.5),
-                 style_series = style_series_2,
+                 style_series = style_series,
                  style_axis = style_axis)
 
 fig.show()
