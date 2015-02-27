@@ -100,13 +100,18 @@ def sort_queries(style, levels):
 
 
 def generate_params(style, selectors, style_name = None, fun_name = None):
+    lengths = [len(query.split('::')) for query in style.keys()]
     levels = 0
-    for query, _ in style.items():
-        fields = query.split('::')
-        if levels == 0:
-            levels = len(fields)
-        else:
-            assert levels == len(fields), 'Selectors length do not match'
+    if len(lengths) > 0:
+        levels = max(lengths)
+        # Expand queries that do not specify all the fields 
+        for query, value in style.items():
+            query_length = len(query.split('::'))
+            if query_length < levels:
+                del style[query]
+                query = '::'.join(['*'] * (levels - query_length)) + '::' + query
+                style[query] = value
+
 
     assert levels == 0 or levels == len(selectors), \
            'Selectors do not match queries depth "{} vs {}"'.format(levels, len(selectors))

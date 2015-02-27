@@ -25,7 +25,6 @@ bar_params = [
     ('bar::width'    , 1.0),
 ]
 
-
 plot_params = [
     #'color'     : '#BB0000',
     ('plot::linewidth', 1.0),

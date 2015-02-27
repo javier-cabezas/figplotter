@@ -8,6 +8,7 @@ import collections as C
 import copy
 import sys
 
+
 def update(d, u):
     '''
     Recursively update a dict hierarchy. It also merges leafs that are Parameter objects,
@@ -32,10 +33,12 @@ def update(d, u):
 
     return d
 
+
 def range_generator(start, stop):
     assert start < stop, "Wrong values for range generator"
     distance = float(stop - start)
     return lambda x: (start + (distance/(x - 1)) * i if x > 1 else start for i in range(x))
+
 
 class Parameter(object):
     @staticmethod
@@ -49,37 +52,6 @@ class Parameter(object):
             Parameter.__check_valid_names(values.keys())
 
         self.values = values
-
-    def has_series(self):
-        return isinstance(self.values, C.Mapping)
-
-    def set_series(self, series):
-        Parameter.__check_valid_names(series)
-
-        if isinstance(self.values, C.Mapping):
-            for s in series:
-                # New series, only add if they have a default value
-                if s not in self.values.keys():
-                    if '*' in self.values.keys():
-                        self.values[s] = self.values['*']
-
-        elif isinstance(self.values, C.Iterable):
-            # TODO: check if we need to support iterables at all.
-            # Elements in the list are assigned sequentially to the different series
-            new_values = {}
-            old_values = [ v for v in self.values ]
-
-            for i in xrange(len(series)):
-                new_values[series[i]] = old_values[i % len(series)]
-
-            self.values = new_values
-        else:
-            new_values = {}
-            # The same value is used for all series
-            for i in xrange(len(series)):
-                new_values[series[i]] = self.values
-
-            self.values = new_values
 
     def update(self, param):
         def check_default_value(orig, new):
@@ -110,6 +82,7 @@ class Parameter(object):
     def __ne__(self, other):
         return not self.__eq__(other)
 
+
 def param(l):
     if isinstance(l, list):
         # Generator from list
@@ -118,8 +91,10 @@ def param(l):
         # Constant generator
         return lambda x: (l for _ in range(x))
 
+
 def string_generator(pattern, values):
     return lambda x: (pattern % value for value in values(x))
+
 
 def clusterize(series, clusters):
     '''
@@ -187,12 +162,14 @@ def clusterize(series, clusters):
 
     return ret
 
-LOG_LEVELS={'error': -1,
-            'message': 0,
-            'verbose': 1,
-            'debug': 2}
-LOG_LEVEL_DEFAULT='message'
-LOG_LEVEL=LOG_LEVELS[LOG_LEVEL_DEFAULT]
+
+LOG_LEVELS = { 'error'  : -1,
+               'message':  0,
+               'verbose':  1,
+               'debug'  :  2 }
+LOG_LEVEL_DEFAULT = 'message'
+LOG_LEVEL         = LOG_LEVELS[LOG_LEVEL_DEFAULT]
+
 
 def set_log_level(log_level):
     global LOG_LEVEL
@@ -202,17 +179,21 @@ def set_log_level(log_level):
         assert log_level in LOG_LEVELS.keys(), 'Invalid log level "{0}". Valid values are: {1}'.format(log_level, LOG_LEVELS.keys())
         LOG_LEVEL = LOG_LEVELS[log_level]
 
+
 def error(msg, cond = True):
     if cond and LOG_LEVEL >= LOG_LEVELS['error']:
         sys.stderr.write('[error]: ' + msg + '\n')
+
 
 def message(msg, cond = True):
     if cond and LOG_LEVEL >= LOG_LEVELS['message']:
         sys.stdout.write(msg + '\n')
 
+
 def warning(msg, cond = True):
     if cond and LOG_LEVEL >= LOG_LEVELS['verbose']:
         sys.stderr.write('[warn]: ' + msg + '\n')
+
 
 def debug(msg, cond = True):
     if cond and LOG_LEVEL >= LOG_LEVELS['debug']:

@@ -11,7 +11,7 @@ from figplotter.plot import figure, cluster_series, cluster_series_2
 
 
 style_series = {
-    '*::*'    : { 'bar::color'    : 'r' },
+    '*'       : { 'bar::color'    : 'r' },
     '*::Read' : { 'bar::color'    : 'b' },
     '*::Write': { 'bar::color'    : 'g' },
     'peak::*' : { 'bar::linewidth': 5   }
