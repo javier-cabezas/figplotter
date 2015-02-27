@@ -9,7 +9,6 @@ from mpl_toolkits.axes_grid1.inset_locator import mark_inset
 from mpl_toolkits.axes_grid1.inset_locator import zoomed_inset_axes
 
 import copy
-
 import itertools
 import numpy as np
 
@@ -17,6 +16,7 @@ from .. import utils
 from . import info
 from . import plotter
 from . import style
+
 
 def instantiate_params_series(params_out, params_in, series):
     for key, value in params_in.items():
@@ -145,7 +145,7 @@ def simple_series(ax, series,
             assert len_series == len(v), 'All series must have the same number of values'
 
     if key_order is None:
-        key_order = series.keys()
+        key_order = list(series.keys())
 
     params_series = style.generate_params(style_series, [ key_order ], 'style_series', fun + '_series')
     params_axis   = style.generate_params(style_axis, [['x', 'y']], 'style_axis', fun + '_series')
