@@ -30,9 +30,11 @@ from figplotter.plot import figure, cluster_series_2
 # identifiers. In a two-level clustering figure, three fields are specified:
 # cluster_level1::cluster_level2::series.
 # Wildcards can be used in any field to select groups of bars.
+# Selectors do not need to specify all fields (e.g. 'Read' is equivalent to
+# '*::*::Read').
 style_series = {
-    '*::*::Read' : { 'bar::color' : 'b' }, # Set color for all 'Read' columns
-    '*::*::Write': { 'bar::color' : 'g' }, # Set color for all 'Write' columns
+    'Read' : { 'bar::color' : 'b' }, # Set color for all 'Read' bars
+    'Write': { 'bar::color' : 'g' }, # Set color for all 'Write' bars
     'PCIe 3.0::remote::*' : { 'bar::linewidth': 5 } # Use different line width
                                                     # for the two bars in the
                                                     # 'PCIe 3.0::remote' cluster
