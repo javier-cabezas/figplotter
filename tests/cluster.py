@@ -69,9 +69,9 @@ def figure_simple_clusterize():
 
 
 style_series_2 = {
-    '*::*::*'    : { 'bar::color'    : 'r' },
-    '*::*::Read' : { 'bar::color'    : 'b' },
-    '*::*::Write': { 'bar::color'    : 'g' },
+    '*'          : { 'bar::color' : 'r' },
+    '*::*::Read' : { 'bar::color' : 'b' },
+    '*::*::Write': { 'bar::color' : 'g' },
     'PCIe 3.0::remote::*' : { 'bar::linewidth': 5   }
 }
 
@@ -97,7 +97,7 @@ def figure_twolevel():
     cluster_series_2(ax,
                      series,
                      [clusters_1, clusters_2],
-                     ylim=(0,4.5),
+                     ylim = (0,4.5),
                      style_series = style_series_2,
                      style_axis = style_axis)
 
@@ -117,7 +117,7 @@ def figure_twolevel_clusterize():
     cluster_series_2(ax,
                      series,
                      [clusters_1, clusters_2],
-                     ylim=(0,4.5),
+                     ylim = (0,4.5),
                      style_series = style_series_2,
                      style_axis = style_axis)
 
