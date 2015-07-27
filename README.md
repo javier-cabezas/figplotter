@@ -1,7 +1,7 @@
 figplotter
 ==========
 
-Plotting infrastructure for Python using matplotlib
+Plotting infrastructure for Python using [matplotlib](matplotlib.org).
 
 Install
 -------
